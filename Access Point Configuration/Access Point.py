@@ -1,7 +1,9 @@
 import sys
-from PyQt6.QtWidgets import (QApplication, QMainWindow, QWidget, QVBoxLayout, QHBoxLayout,
-                             QLabel, QLineEdit, QPushButton, QComboBox, QRadioButton,
-                             QButtonGroup, QFormLayout, QGroupBox)
+from PyQt6.QtWidgets import (
+    QApplication, QMainWindow, QWidget, QVBoxLayout, QHBoxLayout,
+    QLabel, QLineEdit, QPushButton, QComboBox, QRadioButton,
+    QButtonGroup, QFormLayout, QGroupBox
+)
 
 class AP2ConfigWindow(QMainWindow):
     def __init__(self):
@@ -16,6 +18,21 @@ class AP2ConfigWindow(QMainWindow):
         central_widget.setLayout(main_layout)
 
         # Top bar with back, forward buttons and URL
+        self.setup_top_bar(main_layout)
+
+        # Basic Configuration Group Box
+        self.setup_basic_config(main_layout)
+
+        # Wireless and Wired Subforms
+        self.setup_subforms(main_layout)
+
+        # Security Configuration Group Box
+        self.setup_security_config(main_layout)
+
+        # Bottom buttons
+        self.setup_bottom_buttons(main_layout)
+
+    def setup_top_bar(self, main_layout):
         top_bar_layout = QHBoxLayout()
         self.back_button = QPushButton("Back")
         self.forward_button = QPushButton("Forward")
@@ -24,43 +41,38 @@ class AP2ConfigWindow(QMainWindow):
         top_bar_layout.addWidget(self.forward_button)
         top_bar_layout.addWidget(self.url_label)
         main_layout.addLayout(top_bar_layout)
-
-        # Basic Configuration Group Box
+        
+    def setup_basic_config(self, main_layout):
         basic_config_group = QGroupBox("Basic Configuration")
         basic_config_layout = QFormLayout()
+
         self.ap_name_label = QLabel("Access Point Name")
         self.ap_name_entry = QLineEdit("AP2")
         self.ap_name_entry.setReadOnly(True)
+
         self.ip_address_label = QLabel("IP Address")
         self.ip_address_entry = QLineEdit()
+        #self.ip_address_entry.setFixedWidth(150)  # Adjust the width as needed
+
         self.subnet_label = QLabel("/")
         self.subnet_entry = QLineEdit()
         self.subnet_entry.setFixedWidth(50)  # Smaller entry box for subnet
+
         self.gateway_label = QLabel("Gateway")
         self.gateway_entry = QLineEdit("192.168.1.1")
         self.gateway_entry.setReadOnly(True)
+
         self.ssid_label = QLabel("SSID")
         self.ssid_entry = QLineEdit()
+
         self.ssid_broadcast_label = QLabel("SSID Broadcast")
         self.ssid_broadcast_group = QButtonGroup()
         self.ssid_broadcast_yes = QRadioButton("Yes")
         self.ssid_broadcast_no = QRadioButton("No")
         self.ssid_broadcast_group.addButton(self.ssid_broadcast_yes)
         self.ssid_broadcast_group.addButton(self.ssid_broadcast_no)
+
         basic_config_layout.addRow(self.ap_name_label, self.ap_name_entry)
-        basic_config_layout.addRow(self.ip_address_label, self.ip_address_entry)
-        basic_config_layout.addRow(self.subnet_label, self.subnet_entry)
-        basic_config_layout.addRow(self.gateway_label, self.gateway_entry)
-        basic_config_layout.addRow(self.ssid_label, self.ssid_entry)
-
-        # SSID Broadcast radio buttons in a horizontal layout
-        ssid_broadcast_layout = QHBoxLayout()
-        ssid_broadcast_layout.addWidget(self.ssid_broadcast_yes)
-        ssid_broadcast_layout.addWidget(self.ssid_broadcast_no)
-        basic_config_layout.addRow(self.ssid_broadcast_label, ssid_broadcast_layout)
-
-        basic_config_group.setLayout(basic_config_layout)
-        main_layout.addWidget(basic_config_group)
 
         # Combine ip_address_entry and subnet_entry into a single layout
         ip_subnet_layout = QHBoxLayout()
@@ -71,12 +83,16 @@ class AP2ConfigWindow(QMainWindow):
 
         basic_config_layout.addRow(self.gateway_label, self.gateway_entry)
         basic_config_layout.addRow(self.ssid_label, self.ssid_entry)
-        basic_config_layout.addRow(self.ssid_broadcast_label, self.ssid_broadcast_yes)
-        basic_config_layout.addRow("", self.ssid_broadcast_no)
+
+        ssid_broadcast_layout = QHBoxLayout()
+        ssid_broadcast_layout.addWidget(self.ssid_broadcast_yes)
+        ssid_broadcast_layout.addWidget(self.ssid_broadcast_no)
+        basic_config_layout.addRow(self.ssid_broadcast_label, ssid_broadcast_layout)
+
         basic_config_group.setLayout(basic_config_layout)
         main_layout.addWidget(basic_config_group)
-
-        # Wireless and Wired Subforms
+        
+    def setup_subforms(self, main_layout):
         subforms_layout = QHBoxLayout()
 
         # Wireless Group
@@ -113,14 +129,12 @@ class AP2ConfigWindow(QMainWindow):
         self.duplex_group.addButton(self.half_duplex)
         self.duplex_group.addButton(self.full_duplex)
 
-        # Speed radio buttons in a horizontal layout
         speed_layout = QHBoxLayout()
         speed_layout.addWidget(self.auto_speed)
         speed_layout.addWidget(self.speed_100)
         speed_layout.addWidget(self.speed_1000)
         wired_layout.addRow(self.speed_label, speed_layout)
 
-        # Duplex radio buttons in a horizontal layout
         duplex_layout = QHBoxLayout()
         duplex_layout.addWidget(self.auto_duplex)
         duplex_layout.addWidget(self.half_duplex)
@@ -131,7 +145,7 @@ class AP2ConfigWindow(QMainWindow):
         subforms_layout.addWidget(wired_group)
         main_layout.addLayout(subforms_layout)
 
-        # Security Configuration Group Box
+    def setup_security_config(self, main_layout):
         security_group = QGroupBox("Security Configuration")
         security_layout = QFormLayout()
         self.security_label = QLabel("Security Settings")
@@ -149,7 +163,6 @@ class AP2ConfigWindow(QMainWindow):
         self.key_label = QLabel("Key/Passphrase")
         self.key_entry = QLineEdit()
 
-        # Security radio buttons in a horizontal layout
         security_radio_layout = QHBoxLayout()
         security_radio_layout.addWidget(self.none_radio)
         security_radio_layout.addWidget(self.wep_radio)
@@ -162,7 +175,7 @@ class AP2ConfigWindow(QMainWindow):
         security_group.setLayout(security_layout)
         main_layout.addWidget(security_group)
 
-        # Bottom buttons
+    def setup_bottom_buttons(self, main_layout):
         bottom_layout = QHBoxLayout()
         self.reset_button = QPushButton("Reset to Default")
         self.save_button = QPushButton("Save/Close")
